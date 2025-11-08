@@ -85,6 +85,8 @@ jobs:
         
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
+      env:
+        PACKAGE_VERSION: ${{ steps.version.outputs.version }}
       with:
         tag_name: ${{ github.ref_name }}
         name: "Game Assemblies v${{ steps.version.outputs.version }}"
@@ -95,7 +97,7 @@ jobs:
           
           ### Installation
           ```xml
-          <PackageReference Include="MrPurple6411.CityOfGangsters.GameAssemblies" Version="${{ steps.version.outputs.version }}" />
+          <PackageReference Include="MrPurple6411.CityOfGangsters.GameAssemblies" Version="${{ env.PACKAGE_VERSION }}" />
           ```
           
           ### Changes

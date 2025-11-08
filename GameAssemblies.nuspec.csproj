@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   
-  <Import Project="$(MSBuildThisFileDirectory)..\build\Common.props" />
-  
   <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
     <PackageId>MrPurple6411.CityOfGangsters.GameAssemblies</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
     <Title>City of Gangsters Game Assemblies</Title>

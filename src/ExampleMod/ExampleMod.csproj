@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <AssemblyTitle>Example Mod</AssemblyTitle>
+    <AssemblyDescription>An example BepInEx mod for City of Gangsters demonstrating the build system</AssemblyDescription>
+    
+    <!-- BepInEx Plugin Metadata (auto-generates MyPluginInfo) -->
+    <PluginGuid>mrpurple6411.cityofgangsters.examplemod</PluginGuid>
+    <PluginName>Example Mod</PluginName>
+    <PluginVersion>1.0.0</PluginVersion>
+  </PropertyGroup>
+  
+</Project>

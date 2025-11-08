@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <Import Project="$(MSBuildThisFileDirectory)..\build\Common.props" />
+  
+  <PropertyGroup>
+    <PackageId>MrPurple6411.CityOfGangsters.GameAssemblies</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Title>City of Gangsters Game Assemblies</Title>
+    <Description>Publicized and stripped game assemblies for City of Gangsters mod development</Description>
+    <PackageProjectUrl>https://github.com/MrPurple6411/CityofGansters</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MrPurple6411/CityofGansters</RepositoryUrl>
+    <PackageTags>cityofgangsters;bepinex;modding;assemblies</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <DevelopmentDependency>true</DevelopmentDependency>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Include publicized assemblies in the package -->
+    <None Include="lib\**\*.dll" Pack="true" PackagePath="lib\" Condition="Exists('lib')" />
+    
+    <!-- Include build props/targets for consumers -->
+    <None Include="build\**\*" Pack="true" PackagePath="build\" />
+  </ItemGroup>
+
+</Project>

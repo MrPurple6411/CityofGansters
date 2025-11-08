@@ -1,7 +1,6 @@
-# Directory.Build.props
-# This file is automatically imported by all projects in this directory tree
-
 <Project>
+  <!-- Directory.Build.props -->
+  <!-- This file is automatically imported by all projects in this directory tree -->
   <Import Project="build\Common.props" />
   
   <!-- Global NuGet Configuration -->

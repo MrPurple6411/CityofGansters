@@ -1,6 +1,5 @@
-# Directory.Build.targets
-# This file is automatically imported by all projects in this directory tree
-
 <Project>
+  <!-- Directory.Build.targets -->
+  <!-- This file is automatically imported by all projects in this directory tree -->
   <Import Project="build\BepInEx.targets" />
 </Project>

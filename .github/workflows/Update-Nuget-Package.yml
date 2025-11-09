@@ -8,10 +8,6 @@ on:
         required: true
         default: '1.4.4'
         type: string
-  push:
-    paths:
-      - 'lib/**'
-      - 'GameAssemblies.nuspec.csproj'
 
 env:
   DOTNET_VERSION: '8.0.x'

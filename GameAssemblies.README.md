@@ -36,9 +36,17 @@ This package automatically provides references to:
 - `Unity.Postprocessing.Runtime.dll` - Post-processing effects
 - `Steamworks.NET.dll` - Steam integration
 
-## 🔧 Development
+### Accessing Private Members
 
-All internal types are **publicized** for Harmony patching and modding access.
+All internal types are **publicized** for Harmony patching and modding access. To access previously private fields, methods, or types directly, you'll need to enable unsafe code in your project:
+
+```xml
+<PropertyGroup>
+  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+</PropertyGroup>
+```
+
+**Note**: This is only required if you're directly accessing private members. Harmony patching typically doesn't require unsafe code.
 
 ## 📄 Legal
 

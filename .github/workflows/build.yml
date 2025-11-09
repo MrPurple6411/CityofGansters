@@ -148,7 +148,7 @@ jobs:
                 exit 1
               } catch {
                 if ($_.Exception.Response.StatusCode -eq 404) {
-                  Write-Output "✅ No existing release found for $releaseTag - proceeding with build"
+                  Write-Output "SUCCESS: No existing release found for $releaseTag - proceeding with build"
                 } else {
                   Write-Error "Failed to check for existing release: $($_.Exception.Message)"
                   exit 1
@@ -165,17 +165,15 @@ jobs:
               # Write back to file
               Set-Content -Path $projectPath -Value $updatedContent -NoNewline
               
-              Write-Output "✅ Updated PluginVersion to $newVersion in $projectPath"
+              Write-Output "SUCCESS: Updated PluginVersion to $newVersion in $projectPath"
               
               # Commit the version update
               git config --local user.email "action@github.com"
               git config --local user.name "GitHub Action"
               git add $projectPath
-              git commit -m "Auto-update $modName version to $newVersion from release tag
-
-[skip ci]"
+              git commit -m "Auto-update $modName version to $newVersion from release tag [skip ci]"
               git push origin main
-              Write-Output "✅ Committed version update to repository"
+              Write-Output "SUCCESS: Committed version update to repository"
             }
           } else {
             Write-Warning "Could not find PluginVersion in $projectPath"

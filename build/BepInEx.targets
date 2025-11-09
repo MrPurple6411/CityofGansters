@@ -2,8 +2,7 @@
   <!-- BepInEx Dependencies -->
   <ItemGroup>
     <PackageReference Include="BepInEx.Core" Version="$(BepInExVersion)" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="$(BepInExVersion)" PrivateAssets="all" />
-    <PackageReference Include="HarmonyX" Version="$(HarmonyVersion)" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" PrivateAssets="all" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.21" PrivateAssets="all" />
   </ItemGroup>
 
@@ -42,7 +41,8 @@
 
   <Target Name="CreateModPackage" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' OR '$(CreatePackage)' == 'true'">
     <PropertyGroup>
-      <ZipOutputDir>$(SolutionDir)Zips_CityofGangsters</ZipOutputDir>
+      <ZipOutputDir Condition="'$(SolutionDir)' != ''">$(SolutionDir)Zips_CityofGangsters</ZipOutputDir>
+      <ZipOutputDir Condition="'$(SolutionDir)' == ''">$(MSBuildProjectDirectory)\..\..\Zips_CityofGangsters</ZipOutputDir>
       <ModStagingDir>$(ZipOutputDir)\$(MSBuildProjectName)</ModStagingDir>
       <BepInExPluginsDir>$(ModStagingDir)\BepInEx\plugins</BepInExPluginsDir>
     </PropertyGroup>

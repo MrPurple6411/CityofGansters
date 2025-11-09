@@ -13,7 +13,6 @@
     
     <!-- BepInEx Configuration -->
     <BepInExVersion>5.4.21</BepInExVersion>
-    <HarmonyVersion>2.2.2</HarmonyVersion>
     
     <!-- Output Configuration -->
     <OutputType>Library</OutputType>

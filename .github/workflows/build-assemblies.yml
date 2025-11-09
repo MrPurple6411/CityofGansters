@@ -78,11 +78,11 @@ jobs:
         Write-Output "Publishing package: $($package.Name)"
         Write-Output "Package size: $([math]::Round($package.Length / 1MB, 2)) MB"
         
-        dotnet nuget push $package.FullName `
-          --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
-          --api-key "${{ secrets.GITHUB_TOKEN }}" `
-          --skip-duplicate `
-          --no-symbols
+        # Add GitHub Packages source
+        dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+        
+        # Push to GitHub Packages
+        dotnet nuget push "$($package.FullName)" --source "github" --skip-duplicate
         
         Write-Output "🚀 Published to GitHub Packages"
         

@@ -1,11 +1,86 @@
 <Project>
   <!-- Directory.Build.props -->
   <!-- This file is automatically imported by all projects in this directory tree -->
-  <Import Project="build\Common.props" />
+  
+  <!-- Game Information -->
+  <PropertyGroup>
+    <GameName>City of Gangsters</GameName>
+    <GameAssembly>Assembly-CSharp</GameAssembly>
+    <GamePublisher>SomaSim</GamePublisher>
+  </PropertyGroup>
+  
+  <!-- Set default configuration if not specified -->
+  <PropertyGroup>
+    <Configuration Condition="$(Configuration) == ''">Debug</Configuration>
+    <Platform Condition="$(Platform) == ''">AnyCPU</Platform>
+  </PropertyGroup>
+
+  <!-- Build Configuration -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Deterministic>true</Deterministic>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    
+    <!-- BepInEx Configuration -->
+    <BepInExVersion>5.4.21</BepInExVersion>
+    
+    <!-- Output Configuration -->
+    <OutputType>Library</OutputType>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>$(SolutionDir)bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+  </PropertyGroup>
+  
+  <!-- Assembly Metadata -->
+  <PropertyGroup>
+    <AssemblyTitle>$(MSBuildProjectName)</AssemblyTitle>
+    <AssemblyDescription>BepInEx mod for $(GameName)</AssemblyDescription>
+    <AssemblyCompany>MrPurple6411</AssemblyCompany>
+    <AssemblyProduct>$(GameName) Mod</AssemblyProduct>
+    <AssemblyCopyright>Copyright © MrPurple6411 2025</AssemblyCopyright>
+  </PropertyGroup>
+  
+  <!-- Game Assembly Paths -->
+  <PropertyGroup>
+    <GameDir Condition="'$(GameDir)' == '' AND Exists('C:\Program Files (x86)\Steam\steamapps\common\City of Gangsters')">C:\Program Files (x86)\Steam\steamapps\common\City of Gangsters</GameDir>
+    <GameDir Condition="'$(GameDir)' == '' AND Exists('C:\Program Files\Steam\steamapps\common\City of Gangsters')">C:\Program Files\Steam\steamapps\common\City of Gangsters</GameDir>
+    <GameDir Condition="'$(GameDir)' == '' AND Exists('$(MSBuildThisFileDirectory)..\GameDir')">$(MSBuildThisFileDirectory)..\GameDir</GameDir>
+    
+    <ManagedDir>$(GameDir)\CoG_Data\Managed</ManagedDir>
+    <BepInExDir>$(GameDir)\BepInEx</BepInExDir>
+    <PluginsDir>$(BepInExDir)\plugins</PluginsDir>
+  </PropertyGroup>
+  
+  <!-- BepInX Plugin Configuration -->
+  <PropertyGroup>
+    <PluginGuid Condition="'$(PluginGuid)' == ''">mrpurple6411.cityofgangsters.$(MSBuildProjectName.ToLowerInvariant())</PluginGuid>
+    <PluginName Condition="'$(PluginName)' == ''">$(MSBuildProjectName)</PluginName>
+    <PluginVersion Condition="'$(PluginVersion)' == ''">1.0.0</PluginVersion>
+  </PropertyGroup>
+  
+  <!-- Git Tag Version Extraction -->
+  <PropertyGroup>
+    <GitTag Condition="'$(GITHUB_REF_TYPE)' == 'tag'">$(GITHUB_REF_NAME)</GitTag>
+    
+    <!-- Individual mod tag: ModName-v1.2.3 -->
+    <IsIndividualModTag Condition="$(GitTag.Contains('-v')) AND $(GitTag.StartsWith('$(MSBuildProjectName)-v'))">true</IsIndividualModTag>
+    <ExtractedVersion Condition="'$(IsIndividualModTag)' == 'true'">$(GitTag.Substring($([MSBuild]::Add($(MSBuildProjectName.Length), 2))))</ExtractedVersion>
+    
+    <!-- Global tag: v1.2.3 -->
+    <IsGlobalTag Condition="$(GitTag.StartsWith('v')) AND !$(GitTag.Contains('-'))">true</IsGlobalTag>
+    <ExtractedVersion Condition="'$(IsGlobalTag)' == 'true'">$(GitTag.Substring(1))</ExtractedVersion>
+    
+    <!-- Override plugin version if tag matches -->
+    <PluginVersion Condition="'$(ExtractedVersion)' != ''">$(ExtractedVersion)</PluginVersion>
+  </PropertyGroup>
   
   <!-- Global NuGet Configuration -->
   <PropertyGroup>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
   </PropertyGroup>
   
@@ -16,6 +91,14 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+  
+  <!-- Package References (Core dependencies for BepInX plugins) -->
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" IncludeAssets="compile" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" PrivateAssets="all" />
+    <PackageReference Include="UnityEngine.Modules" Version="2020.3.28" IncludeAssets="compile" PrivateAssets="all" />
+    <PackageReference Include="MrPurple6411.CityOfGangsters.GameAssemblies" Version="1.0.0" IncludeAssets="compile" PrivateAssets="all" />
+  </ItemGroup>
   
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>

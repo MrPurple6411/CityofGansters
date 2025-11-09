@@ -112,24 +112,68 @@ jobs:
       if: needs.detect-changes.outputs.tag-type == 'individual'
       run: |
         $modName = "${{ needs.detect-changes.outputs.target-mod }}"
-        $version = "${{ needs.detect-changes.outputs.version }}"
+        $newVersion = "${{ needs.detect-changes.outputs.version }}"
         $projectPath = "src\$modName\$modName.csproj"
         
         if (Test-Path $projectPath) {
-          Write-Output "Updating $projectPath to version $version"
+          Write-Output "Validating and updating $projectPath to version $newVersion"
           
           # Read the project file
           $content = Get-Content $projectPath -Raw
           
-          # Update the PluginVersion property
-          $pattern = '<PluginVersion>.*?</PluginVersion>'
-          $replacement = "<PluginVersion>$version</PluginVersion>"
-          $updatedContent = $content -replace $pattern, $replacement
-          
-          # Write back to file
-          Set-Content -Path $projectPath -Value $updatedContent -NoNewline
-          
-          Write-Output "Updated PluginVersion to $version in $projectPath"
+          # Extract current PluginVersion
+          if ($content -match '<PluginVersion>(.*?)</PluginVersion>') {
+            $currentVersion = $matches[1]
+            Write-Output "Current version: $currentVersion"
+            Write-Output "New version: $newVersion"
+            
+            # Parse versions for comparison
+            $current = [Version]$currentVersion
+            $new = [Version]$newVersion
+            
+            if ($new -lt $current) {
+              Write-Error "New version $newVersion is less than current version $currentVersion. Tag version must be greater than or equal to current version."
+              exit 1
+            } elseif ($new -eq $current) {
+              Write-Output "Version $newVersion matches current version - checking for existing release..."
+              
+              # Check if a release already exists for this version
+              $releaseTag = "$modName-v$newVersion"
+              Write-Output "Checking for existing release: $releaseTag"
+              
+              try {
+                $response = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/$releaseTag" -Headers @{
+                  "Authorization" = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+                  "Accept" = "application/vnd.github.v3+json"
+                } -ErrorAction Stop
+                
+                Write-Error "Release $releaseTag already exists (ID: $($response.id)). Cannot create duplicate release for the same version."
+                exit 1
+              } catch {
+                if ($_.Exception.Response.StatusCode -eq 404) {
+                  Write-Output "✅ No existing release found for $releaseTag - proceeding with build"
+                } else {
+                  Write-Error "Failed to check for existing release: $($_.Exception.Message)"
+                  exit 1
+                }
+              }
+            } else {
+              Write-Output "Version $newVersion is greater than current version $currentVersion - updating..."
+              
+              # Update the PluginVersion property
+              $pattern = '<PluginVersion>.*?</PluginVersion>'
+              $replacement = "<PluginVersion>$newVersion</PluginVersion>"
+              $updatedContent = $content -replace $pattern, $replacement
+              
+              # Write back to file
+              Set-Content -Path $projectPath -Value $updatedContent -NoNewline
+              
+              Write-Output "✅ Updated PluginVersion to $newVersion in $projectPath"
+            }
+          } else {
+            Write-Warning "Could not find PluginVersion in $projectPath - adding it..."
+            # Could add logic to insert PluginVersion if missing
+          }
         } else {
           Write-Warning "Project file not found: $projectPath"
         }

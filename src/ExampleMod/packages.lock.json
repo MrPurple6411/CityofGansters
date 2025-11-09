@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETFramework,Version=v4.8": {
+      "BepInEx.Core": {
+        "type": "Direct",
+        "requested": "[6.0.0-be.1, )",
+        "resolved": "6.0.0-be.1",
+        "contentHash": "YKFJeowSjsK2X9CldA6gyUmzG7GAghF7vBtHEiMKwZm0FVcNydHNTQYDTMFAjmJK2Ayv4f5BtOQ3BAWBbUx1ZQ==",
+        "dependencies": {
+          "HarmonyX": "2.10.0",
+          "MonoMod.Utils": "22.3.23.4",
+          "SemanticVersioning": "2.0.2"
+        }
+      },
+      "BepInEx.PluginInfoProps": {
+        "type": "Direct",
+        "requested": "[1.1.0, )",
+        "resolved": "1.1.0",
+        "contentHash": "RqM3aaGs8Hc2m0D+8aSt9mv09rCMYNIF35NB3D6KA2zSpcXJh/9ZVWrPlIUJfA8KYzodSWcCMUexEW24fjwR3w=="
+      },
+      "HarmonyX": {
+        "type": "Direct",
+        "requested": "[2.10.0, )",
+        "resolved": "2.10.0",
+        "contentHash": "4ayiy/dlCiW86K2N7Jvbf+VpI5wvP7dncv/6oRmfwRi32UCmCRzCGzsxdMfzJZkp6/26oBW+DrD8vi4UejzVAg==",
+        "dependencies": {
+          "MonoMod.RuntimeDetour": "22.3.23.4"
+        }
+      },
+      "MrPurple6411.CityOfGangsters.GameAssemblies": {
+        "type": "Direct",
+        "requested": "[1.0.0, )",
+        "resolved": "1.4.4",
+        "contentHash": "KOmv6WHGB992jruAUzx2sSAE5VbLPR9KWb3QF4KHZupUdyeiNRBrFMWDqrgZrJPqdTBt5SyfVU1gAMbkZw7eMA=="
+      },
+      "UnityEngine.Modules": {
+        "type": "Direct",
+        "requested": "[2021.3.21, )",
+        "resolved": "2021.3.21",
+        "contentHash": "vqkRz4MgIbvycjwTs5Sf5mMpCXLBkPZiHCIHH26Is0zNvNU4tCzoPBBH8L0aUQuFYWQ0VJGPfbXpG6zsbm6NXg=="
+      },
+      "Mono.Cecil": {
+        "type": "Transitive",
+        "resolved": "0.11.4",
+        "contentHash": "IC1h5g0NeJGHIUgzM1P82ld57knhP0IcQfrYITDPXlNpMYGUrsG5TxuaWTjaeqDNQMBDNZkB8L0rBnwsY6JHuQ=="
+      },
+      "MonoMod.RuntimeDetour": {
+        "type": "Transitive",
+        "resolved": "22.3.23.4",
+        "contentHash": "2nwwFfwYDSgUzhi+1MutTg1gyUgXoMS4+E04vHOFp84Vxs0oBkkn4mGAfhkr272y0j3vqIBzo2aT9pXRlCd/ZA==",
+        "dependencies": {
+          "Mono.Cecil": "0.11.4",
+          "MonoMod.Utils": "22.3.23.4"
+        }
+      },
+      "MonoMod.Utils": {
+        "type": "Transitive",
+        "resolved": "22.3.23.4",
+        "contentHash": "xso1rHFfcsPy3X1kj2uDk115z9tLTMxPEnba/zdNB6WazvrLRWGPuV9d4hHwr1iVz5quTFlZCbLBlE5fS2TqLA==",
+        "dependencies": {
+          "Mono.Cecil": "0.11.4"
+        }
+      },
+      "SemanticVersioning": {
+        "type": "Transitive",
+        "resolved": "2.0.2",
+        "contentHash": "4EQgYdNZ92SyaO7YFk6olVnebF5V+jrHyMUjvPq89tLeMo8NSfgDF+6Zwq/lgh9j/0yfQp9Lkm0ZA0rUATCZFA=="
+      }
+    }
+  }
+}

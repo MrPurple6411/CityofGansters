@@ -1,5 +1,6 @@
 using BepInEx;
 using BepInEx.Logging;
+using BepInEx.Unity.Mono;
 using HarmonyLib;
 using Game;
 using UnityEngine;
@@ -7,13 +8,13 @@ using UnityEngine;
 namespace ExampleMod
 {
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-    public class Plugin : BaseUnityPlugin
+    public class Plugin : BasePlugin
     {
-        internal static new ManualLogSource Logger;
+        internal static ManualLogSource Logger;
         
-        private void Awake()
+        public override void Load()
         {
-            Logger = base.Logger;
+            Logger = Log;
             
             // Apply Harmony patches
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);

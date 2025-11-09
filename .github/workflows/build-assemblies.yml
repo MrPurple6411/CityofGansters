@@ -78,10 +78,23 @@ jobs:
         Write-Output "Publishing package: $($package.Name)"
         Write-Output "Package size: $([math]::Round($package.Length / 1MB, 2)) MB"
         
+        # Debug information
+        Write-Output "Repository: ${{ github.repository }}"
+        Write-Output "Actor: ${{ github.actor }}" 
+        Write-Output "Repository Owner: ${{ github.repository_owner }}"
+        
         # Add GitHub Packages source
-        dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+        $sourceUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+        Write-Output "Adding NuGet source: $sourceUrl"
+        
+        dotnet nuget add source --username "${{ github.actor }}" --password "${{ secrets.GITHUB_TOKEN }}" --store-password-in-clear-text --name github "$sourceUrl"
+        
+        # List configured sources
+        Write-Output "Configured NuGet sources:"
+        dotnet nuget list source
         
         # Push to GitHub Packages
+        Write-Output "Pushing package to GitHub Packages..."
         dotnet nuget push "$($package.FullName)" --source "github" --skip-duplicate
         
         Write-Output "🚀 Published to GitHub Packages"

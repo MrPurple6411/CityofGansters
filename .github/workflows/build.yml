@@ -118,9 +118,8 @@ jobs:
         $mods = $changedMods -split '\s+' | Where-Object { $_ -ne '' }
         Write-Output "Building mods: $($mods -join ', ')"
         
-        # Create directories
-        New-Item -ItemType Directory -Force -Path "packages"
-        New-Item -ItemType Directory -Force -Path "zips"
+        # Create output directory
+        New-Item -ItemType Directory -Force -Path "release-packages"
         
         foreach ($modName in $mods) {
           Write-Output "Processing mod: $modName"
@@ -128,31 +127,34 @@ jobs:
           $projectPath = "src\$modName\$modName.csproj"
           
           if (Test-Path $projectPath) {
-            Write-Output "Building mod: $modName"
-            dotnet build $projectPath --configuration Release --no-restore
+            Write-Output "Building and packaging mod: $modName"
             
-            # Package the mod
-            $buildPath = "src\$modName\bin\Release\net48"
-            if (Test-Path $buildPath) {
-              # Determine version for packaging
-              if ($tagType -eq "individual" -and "${{ needs.detect-changes.outputs.target-mod }}" -eq $modName) {
-                $fileName = "$modName-v$version.zip"
-              } elseif ($tagType -eq "global") {
-                $fileName = "$modName-v$version.zip"
+            # Build and package using our Directory.Build.targets
+            dotnet build $projectPath --configuration Release --no-restore -p:CreatePackage=true
+            
+            # Find the generated package
+            $packagePath = "src\$modName\bin\Release\Package"
+            if (Test-Path $packagePath) {
+              $zipFile = Get-ChildItem "$packagePath\*.zip" | Select-Object -First 1
+              if ($zipFile) {
+                # Determine final filename based on tag type
+                if ($tagType -eq "individual" -and "${{ needs.detect-changes.outputs.target-mod }}" -eq $modName) {
+                  $finalFileName = "$modName-v$version.zip"
+                } elseif ($tagType -eq "global") {
+                  $finalFileName = "$modName-v$version.zip"
+                } else {
+                  $finalFileName = "$modName-dev.zip"
+                }
+                
+                $finalPath = "release-packages\$finalFileName"
+                Copy-Item $zipFile.FullName $finalPath
+                Write-Output "Created package: $finalPath"
               } else {
-                $fileName = "$modName-dev.zip"
+                Write-Error "No zip file found in package directory: $packagePath"
+                exit 1
               }
-              
-              $packageDir = "packages\$modName"
-              New-Item -ItemType Directory -Force -Path $packageDir
-              Copy-Item -Recurse -Path "$buildPath\*" -Destination $packageDir
-              
-              $zipPath = "zips\$fileName"
-              Compress-Archive -Path "$packageDir\*" -DestinationPath $zipPath -Force
-              
-              Write-Output "Created package: $zipPath"
             } else {
-              Write-Error "Build output not found: $buildPath"
+              Write-Error "Package directory not found: $packagePath"
               exit 1
             }
           } else {
@@ -165,7 +167,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: mod-packages-${{ github.sha }}
-        path: zips/
+        path: release-packages/
         retention-days: 30
 
   # Create releases for tagged builds
@@ -180,7 +182,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: mod-packages-${{ github.sha }}
-        path: zips/
+        path: release-packages/
         
     - name: Create Individual Mod Release
       if: needs.detect-changes.outputs.tag-type == 'individual'
@@ -202,7 +204,7 @@ jobs:
           - BepInEx 5.4.22 or later
           - City of Gangsters
         files: |
-          zips/${{ needs.detect-changes.outputs.target-mod }}-v${{ needs.detect-changes.outputs.version }}.zip
+          release-packages/${{ needs.detect-changes.outputs.target-mod }}-v${{ needs.detect-changes.outputs.version }}.zip
         draft: false
         prerelease: false
       env:
@@ -229,7 +231,7 @@ jobs:
           - BepInEx 5.4.22 or later
           - City of Gangsters
         files: |
-          zips/*.zip
+          release-packages/*.zip
         draft: false
         prerelease: false
       env:

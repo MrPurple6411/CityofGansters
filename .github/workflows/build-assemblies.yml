@@ -5,6 +5,10 @@ on:
     tags:
       - 'assemblies-v*'   # Trigger on assembly tags like assemblies-v1.4.4
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   DOTNET_VERSION: '8.0.x'
 
@@ -71,7 +75,15 @@ jobs:
       shell: pwsh
       run: |
         $package = Get-ChildItem "./nupkg/*.nupkg" | Select-Object -First 1
-        dotnet nuget push $package.FullName --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
+        Write-Output "Publishing package: $($package.Name)"
+        Write-Output "Package size: $([math]::Round($package.Length / 1MB, 2)) MB"
+        
+        dotnet nuget push $package.FullName `
+          --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
+          --api-key "${{ secrets.GITHUB_TOKEN }}" `
+          --skip-duplicate `
+          --no-symbols
+        
         Write-Output "🚀 Published to GitHub Packages"
         
     # Optional: Publish to NuGet.org (uncomment and add NUGET_API_KEY secret)

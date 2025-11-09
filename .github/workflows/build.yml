@@ -118,7 +118,10 @@ jobs:
         if (Test-Path $projectPath) {
           Write-Output "Validating and updating $projectPath to version $newVersion"
           
-          # Read the project file
+          # Switch to main branch first to get current version
+          git checkout main
+          
+          # Read the project file from main branch
           $content = Get-Content $projectPath -Raw
           
           # Extract current PluginVersion
@@ -170,8 +173,7 @@ jobs:
               
               Write-Output "SUCCESS: Updated PluginVersion to $newVersion in $projectPath"
               
-              # Switch to main branch and commit the version update
-              git checkout main
+              # Commit the version update (already on main branch)
               git config --local user.email "action@github.com"
               git config --local user.name "GitHub Action"
               git add $projectPath

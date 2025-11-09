@@ -105,9 +105,6 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         
-    - name: Restore Dependencies
-      run: dotnet restore ${{ env.SOLUTION_FILE }}
-      
     - name: Update Plugin Version to Match Tag
       if: needs.detect-changes.outputs.tag-type == 'individual'
       run: |
@@ -169,39 +166,27 @@ jobs:
               Set-Content -Path $projectPath -Value $updatedContent -NoNewline
               
               Write-Output "✅ Updated PluginVersion to $newVersion in $projectPath"
+              
+              # Commit the version update
+              git config --local user.email "action@github.com"
+              git config --local user.name "GitHub Action"
+              git add $projectPath
+              git commit -m "Auto-update $modName version to $newVersion from release tag
+
+[skip ci]"
+              git push origin main
+              Write-Output "✅ Committed version update to repository"
             }
           } else {
-            Write-Warning "Could not find PluginVersion in $projectPath - adding it..."
-            # Could add logic to insert PluginVersion if missing
+            Write-Warning "Could not find PluginVersion in $projectPath"
           }
         } else {
           Write-Warning "Project file not found: $projectPath"
         }
       shell: pwsh
-      
-    - name: Commit Version Update
-      if: needs.detect-changes.outputs.tag-type == 'individual'
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
         
-        $modName = "${{ needs.detect-changes.outputs.target-mod }}"
-        $newVersion = "${{ needs.detect-changes.outputs.version }}"
-        $projectPath = "src/$modName/$modName.csproj"
-        
-        # Check if there are changes to commit
-        $changes = git diff --name-only
-        if ($changes -match $projectPath.Replace('\', '/')) {
-          git add $projectPath
-          git commit -m "Auto-update $modName version to $newVersion from release tag
-
-[skip ci]"
-          git push origin main
-          Write-Output "✅ Committed version update to repository"
-        } else {
-          Write-Output "No version changes to commit"
-        }
-      shell: pwsh
+    - name: Restore Dependencies
+      run: dotnet restore ${{ env.SOLUTION_FILE }}
       
     - name: Build Changed Mods
       run: |

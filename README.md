@@ -9,7 +9,7 @@ A professional BepInEx modding workspace for City of Gangsters with automated bu
 - City of Gangsters (Steam)
 - BepInEx 5.4.22+ installed in game directory
 
-> **Note**: While mods target .NET Framework 4.8 (required by Unity/BepInX), we use the modern .NET 8 SDK for building. This gives us access to modern tooling, MSBuild features, and C# language features while still producing .NET Framework 4.8 compatible assemblies.
+> **Note**: While mods target .NET Framework 4.8 (required by Unity/BepInEx), we use the modern .NET 8 SDK for building. This gives us access to modern tooling, MSBuild features, and C# language features while still producing .NET Framework 4.8 compatible assemblies.
 
 ### Quick Start for Contributors
 
@@ -116,7 +116,7 @@ dotnet build -c Debug
 This will:
 - Build your mod
 - Copy DLL and PDB files to `BepInEx/plugins/`
-- Enable debugging with Visual Studio/VS Code
+- Ready for testing in-game
 
 ### Release Build
 
@@ -144,13 +144,10 @@ The build system automatically detects your City of Gangsters installation:
 
 ### Custom MSBuild Targets
 
-- **`StartGame`** - Launch the game for testing
-- **`PublicizeAssemblies`** - Create publicized versions of game assemblies
-- **`CreateModPackage`** - Create distributable mod package
+- **`ZipPlugins`** - Create distributable mod package (enabled with `-p:CreatePackage=true`)
 
 ```bash
-dotnet build -t:StartGame        # Launch the game
-dotnet build -t:PublicizeAssemblies  # Publicize game assemblies
+dotnet build -p:CreatePackage=true  # Create distributable ZIP package
 ```
 
 ## GitHub Actions
@@ -253,29 +250,30 @@ Unity dependencies are **not included** - use official Unity NuGet packages inst
 
 ## Debugging
 
-### Visual Studio Setup
+BepInEx mods use log-based debugging since traditional debugger attachment to Unity games is not practical.
 
-1. Set your mod project as startup project
-2. In project properties, set:
-   - **Start external program**: `$(GameDir)\City of Gangsters.exe`
-   - **Working directory**: `$(GameDir)`
-3. Build in Debug mode
-4. Press F5 to start debugging
+### Debugging Workflow
 
-### VS Code Setup
+1. Add detailed logging to your mod:
+   ```csharp
+   Logger.LogInfo("Important state information");
+   Logger.LogWarning("Potential issues");
+   Logger.LogError("Critical errors");
+   ```
 
-Use the provided launch configuration in `.vscode/launch.json`:
+2. Build in Debug mode to include detailed symbols:
+   ```bash
+   dotnet build -c Debug
+   ```
 
-```json
-{
-  "name": "Debug Mod",
-  "type": "coreclr",
-  "request": "launch",
-  "program": "${workspaceFolder}/GameDir/City of Gangsters.exe",
-  "cwd": "${workspaceFolder}/GameDir",
-  "stopAtEntry": false
-}
-```
+3. Monitor the BepInEx console window or log files:
+   - Console: Enable in `BepInEx/config/BepInEx.cfg`
+   - Logs: Located in `BepInEx/LogOutput.log`
+
+4. Use Harmony's detailed logging for patch debugging:
+   ```csharp
+   Harmony.DEBUG = true;  // Enable before patching
+   ```
 
 ## Contributing
 

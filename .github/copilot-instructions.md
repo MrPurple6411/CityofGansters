@@ -30,11 +30,11 @@
 
 ## Project Structure
 
-### BepInX Modding
-- This is a BepInX modding workspace for City of Gangsters
-- Target framework: .NET Framework 4.8 (required by Unity/BepInX)
+### BepInEx Modding
+- This is a BepInEx modding workspace for City of Gangsters
+- Target framework: .NET Framework 4.8 (required by Unity/BepInEx)
 - Use .NET 8 SDK for building (modern tooling, backward compatible)
-- Follow BepInX plugin patterns with `BaseUnityPlugin` and `MyPluginInfo`
+- Follow BepInEx plugin patterns with `BaseUnityPlugin` and `MyPluginInfo`
 
 ### Versioning
 - Use semantic versioning (X.Y.Z)
@@ -44,7 +44,7 @@
 ### Build System
 - Uses Directory.Build.props/targets for shared configuration
 - NuGet packages for game assemblies (MrPurple6411.CityOfGangsters.GameAssemblies)
-- Packaging creates proper BepInX folder structure: `BepInX/plugins/ModName/`
+- Packaging creates proper BepInEx folder structure: `BepInEx/plugins/ModName/`
 
 ## Development Workflow
 
@@ -59,7 +59,7 @@
 ### GitHub Actions
 - Automatic building and releasing on git tags
 - Version validation and duplicate prevention
-- Clean BepInX-compatible packaging
+- Clean BepInEx-compatible packaging
 
 ## Error Prevention
 - Always test YAML syntax in workflows

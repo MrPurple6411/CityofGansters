@@ -39,10 +39,15 @@
     <Warning Text="Could not find BepInEx plugins directory: $(PluginsDir). Install BepInEx and run the game once to create the directory." Condition="'$(PluginsDirExists)' == 'false'" />
   </Target>
 
-  <Target Name="CreateModPackage" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' OR '$(CreatePackage)' == 'true'">
+  <Target Name="CreateModPackage" AfterTargets="Build" Condition="'$(CreatePackage)' == 'true'">
+    <!-- Define base directory for workspace root -->
     <PropertyGroup>
-      <ZipOutputDir Condition="'$(SolutionDir)' != ''">$(SolutionDir)Zips_CityofGangsters</ZipOutputDir>
-      <ZipOutputDir Condition="'$(SolutionDir)' == ''">$(MSBuildProjectDirectory)\..\..\Zips_CityofGangsters</ZipOutputDir>
+      <WorkspaceRoot Condition="'$(SolutionDir)' != ''">$(SolutionDir)</WorkspaceRoot>
+      <WorkspaceRoot Condition="'$(SolutionDir)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..'))</WorkspaceRoot>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <ZipOutputDir>$(WorkspaceRoot)\Zips_CityofGangsters</ZipOutputDir>
       <ModStagingDir>$(ZipOutputDir)\$(MSBuildProjectName)</ModStagingDir>
       <BepInExPluginsDir>$(ModStagingDir)\BepInEx\plugins</BepInExPluginsDir>
     </PropertyGroup>

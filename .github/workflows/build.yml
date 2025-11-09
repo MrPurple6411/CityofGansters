@@ -179,6 +179,30 @@ jobs:
         }
       shell: pwsh
       
+    - name: Commit Version Update
+      if: needs.detect-changes.outputs.tag-type == 'individual'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        $modName = "${{ needs.detect-changes.outputs.target-mod }}"
+        $newVersion = "${{ needs.detect-changes.outputs.version }}"
+        $projectPath = "src/$modName/$modName.csproj"
+        
+        # Check if there are changes to commit
+        $changes = git diff --name-only
+        if ($changes -match $projectPath.Replace('\', '/')) {
+          git add $projectPath
+          git commit -m "Auto-update $modName version to $newVersion from release tag
+
+[skip ci]"
+          git push origin main
+          Write-Output "✅ Committed version update to repository"
+        } else {
+          Write-Output "No version changes to commit"
+        }
+      shell: pwsh
+      
     - name: Build Changed Mods
       run: |
         $changedMods = "${{ needs.detect-changes.outputs.changed-mods }}"

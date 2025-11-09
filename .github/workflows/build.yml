@@ -99,6 +99,9 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -167,7 +170,8 @@ jobs:
               
               Write-Output "SUCCESS: Updated PluginVersion to $newVersion in $projectPath"
               
-              # Commit the version update
+              # Switch to main branch and commit the version update
+              git checkout main
               git config --local user.email "action@github.com"
               git config --local user.name "GitHub Action"
               git add $projectPath

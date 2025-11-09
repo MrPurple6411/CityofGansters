@@ -108,6 +108,33 @@ jobs:
     - name: Restore Dependencies
       run: dotnet restore ${{ env.SOLUTION_FILE }}
       
+    - name: Update Plugin Version to Match Tag
+      if: needs.detect-changes.outputs.tag-type == 'individual'
+      run: |
+        $modName = "${{ needs.detect-changes.outputs.target-mod }}"
+        $version = "${{ needs.detect-changes.outputs.version }}"
+        $projectPath = "src\$modName\$modName.csproj"
+        
+        if (Test-Path $projectPath) {
+          Write-Output "Updating $projectPath to version $version"
+          
+          # Read the project file
+          $content = Get-Content $projectPath -Raw
+          
+          # Update the PluginVersion property
+          $pattern = '<PluginVersion>.*?</PluginVersion>'
+          $replacement = "<PluginVersion>$version</PluginVersion>"
+          $updatedContent = $content -replace $pattern, $replacement
+          
+          # Write back to file
+          Set-Content -Path $projectPath -Value $updatedContent -NoNewline
+          
+          Write-Output "Updated PluginVersion to $version in $projectPath"
+        } else {
+          Write-Warning "Project file not found: $projectPath"
+        }
+      shell: pwsh
+      
     - name: Build Changed Mods
       run: |
         $changedMods = "${{ needs.detect-changes.outputs.changed-mods }}"
